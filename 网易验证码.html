@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <title>易盾验证码移动端页面</title>
+    <style>
+        body{ /* 简单的样式reset */
+            margin:0;
+        }
+        #captcha_div{
+            padding: 5px;
+        }
+        .ncpt_txt_status { /* 强制隐藏自带的提示信息 */
+            display: none;
+        }
+        #debug_log{
+            font-size: 10px;
+            line-height:10px;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+<div class="captcha_div_holder">
+    <div id="captcha_div"></div>
+    <div id="debug_log"></div>
+</div>
+<script src="https://cstaticdun.126.net/js/c.v1.1.1.js"></script>
+<script>
+    var debug = false, logDiv = document.getElementById("debug_log");
+    var defaultWidth = 330; // 默认宽度: 图片原生宽度 320 + padding(5*2)
+    /**
+     * 显示调试信息
+     * @param str 要显示的调试信息
+     */
+    var log = function (str) {
+        if (!debug) { return; }
+        var p = document.createElement("p");
+        p.appendChild(document.createTextNode(str));
+        logDiv.insertBefore(p, logDiv.firstChild);
+    };
+
+    /**
+     * 获取页面的查询请求参数
+     */
+    var getArgs = function() {
+      var args = {}, url = location.href;
+      if(url.indexOf('?') == -1){ // 木有查询参数
+        return args;
+      }
+      var items = (url.split('?')[1]).split("&");
+      for (var i = 0, len = items.length; i < len; i = i + 1) {
+          var splits = items[i].split("=");
+          args[splits[0]] = splits[1];
+      }
+      return args;
+    };
+    var args = getArgs();
+    /**
+     * 验证码初始化参数
+     */
+    var opts = {
+      "element":"captcha_div",
+      "captchaId": "5622fb225dcd429c95808563b059cf21",
+      "staticServer": "cstaticdun.126.net",
+      "mode":"embed",
+      "width": defaultWidth,
+      "initErrorHandler": function(e){
+        //TODO 初始化验证码错误
+      },
+      "verifyCallback":function(ret){
+		var msg = ret["value"] ? "验证成功" : "验证失败";
+		//TODO 获取拿到的
+		var validate = this.getValidate();
+		console.log(validate)
+	  }
+    }
+
+    // 使用地址传入的参数覆盖默认的配置
+    if(args["staticServer"]){ opts["staticServer"] = args["staticServer"]; };
+    if(args["apiServer"]){ opts["apiServer"] = args["apiServer"]; };
+    if(args["width"]){ opts["width"] = args["width"] - 10; }; // 如果应用方有传width，那么以应用方传入为准，减掉10px是左右的padding
+    if(args["debug"] === "true"){// debug模式，将请求参数打印出来
+      debug = true;
+      log("window.screen.width = "+window.screen.width, true);
+      log("body.width = "+document.body.offsetWidth, true);
+      log("captcha_div.width = "+document.getElementById("captcha_div").offsetWidth, true);
+      log("args.width = "+args.width, true);
+      log("opts.width = "+opts.width, true);
+      for(var k in args){
+        log(k+"="+args[k]);
+      }
+    };
+
+    // 根据宽度按比例动态调整高度
+    document.getElementById("captcha_div").style.marginTop = Math.round(Number(opts["width"]) * 0.34)+'px';
+
+    new NECaptcha(opts);
+
+</script>
+</body>
+</html>

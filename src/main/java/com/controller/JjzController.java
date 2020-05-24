@@ -3,6 +3,7 @@ package com.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.utils.AESUtils;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -31,8 +32,8 @@ import java.util.UUID;
  */
 
 @RestController
-@RequestMapping(("/bjjj"))
-public class BjjjController {
+@RequestMapping(("/jjz"))
+public class JjzController {
 
 
     /**
@@ -80,13 +81,15 @@ public class BjjjController {
      */
     private static String signKey = "_zcbl2019";
 
-    private static RestTemplate restTemplate = new RestTemplate();
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     /**
      * 查询进京证记录
      * @return
      */
-    @GetMapping("/jjz/record")
+    @GetMapping("/record")
     public JSONObject record() throws NoSuchPaddingException, InvalidAlgorithmParameterException, UnsupportedEncodingException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, InvalidKeyException, UnknownHostException {
         String url = "https://bjjj.zhongchebaolian.com/bjjjfront/record";
 
